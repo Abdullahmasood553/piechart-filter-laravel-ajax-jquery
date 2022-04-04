@@ -9,7 +9,8 @@ use App\Models\DataAnalytics;
 class ChartController extends Controller
 {
     public function index() {  
-        return view('chart');
+        $fetch_year =  DataAnalytics::select("year")->groupBy('year')->orderBy('year', 'DESC')->get();
+        return view('chart', compact('fetch_year', $fetch_year));
     }
 
     public function fetchData(Request $request) {
@@ -30,12 +31,8 @@ class ChartController extends Controller
 
     function fetch_chart_data($year)
     {
-
-    $data = DataAnalytics::select(DB::raw('COUNT(*) as total_sales, name'))->where('year', $year)
-        ->groupBy('name')
-        ->get();
-  
-     return $data;
+        $data = DataAnalytics::select(DB::raw('COUNT(*) as total_sales, name'))->where('year', $year)->groupBy('name')->get();
+        return $data;
     }
 
 }

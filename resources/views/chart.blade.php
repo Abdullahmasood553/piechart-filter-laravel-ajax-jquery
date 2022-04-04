@@ -13,24 +13,26 @@
 
         h1 {
             color: #fff;
-            background:#333;
+            background: #333;
             padding: 8px 4px;
             text-align: center;
         }
+
         #chart_wrap {
             position: relative;
             padding-bottom: 100%;
             height: 0;
-            overflow:hidden;
+            overflow: hidden;
         }
 
         #piechart {
             position: absolute;
             top: 0;
             left: 0;
-            width:50%;
-            height:30%;
+            width: 50%;
+            height: 30%;
         }
+
     </style>
     <!-- CSS only -->
 
@@ -40,15 +42,17 @@
     <div class="container">
         <h1>Dynamic Bar Charts | AJAX & JQuery</h1>
     </div>
-    <div class="col-md-3">  
-        <input type="text" name="start_date" id="start_date" class="form-control date_picker" placeholder="Select Date" /> 
+    <div class="col-md-3">
+        {{-- <input type="text" name="start_date" id="start_date" class="form-control date_picker"
+            placeholder="Select Date" /> --}}
         <select name="year" id="year" class="form-control">
             <option>Select Year</option>
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-        </select> 
-   </div>  
-    
+            @foreach($fetch_year as $key)
+            <option value="{{$key->year}}">{{$key->year}}</option>
+            @endforeach
+        </select>
+    </div>
+
     <div id="chart_wrap">
         <div id="piechart"></div>
     </div>
@@ -61,10 +65,6 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 <script type="text/javascript">
-    // google.charts.load('current', {
-    //     'packages': ['corechart'], 'callback': drawChart
-    // });
-
     google.charts.load('current', {
         packages: ['corechart']
     });
@@ -75,11 +75,17 @@
 
     function drawChart(drawChart) {
         let jsonData = drawChart;
-    
+
         let data = new google.visualization.arrayToDataTable([]);
-        data.addColumn({type: 'string', label: 'Name'});
-         data.addColumn({type: 'number', label: 'Sales'});
-     
+        data.addColumn({
+            type: 'string',
+            label: 'Name'
+        });
+        data.addColumn({
+            type: 'number',
+            label: 'Sales'
+        });
+
 
         $.each(jsonData, (i, jsonData) => {
             let name = jsonData.name;
@@ -102,32 +108,32 @@
 
 
 <script>
-
-
     function load_data(year) {
         $.ajax({
-                url: 'fetch_data',
-                method:"POST",
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    year:year
-                },
-                dataType: "JSON",
-                success:function(data) {
-                    drawChart(data);
-                } 
-            });
-            console.log(`Year: ${year}`);
+            url: 'fetch_data',
+            method: "POST",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                year: year
+            },
+            dataType: "JSON",
+            success: function (data) {
+                drawChart(data);
+            }
+        });
+        console.log(`Year: ${year}`);
     }
 
 
-    $(document).ready(function() {
-        $('#year').change(function() {
+    $(document).ready(function () {
+        $('#year').change(function () {
             let year = $(this).val();
-            if(year != '') {
+            if (year != '') {
                 load_data(year);
             }
         });
     });
+
 </script>
+
 </html>
